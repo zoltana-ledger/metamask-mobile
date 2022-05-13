@@ -66,3 +66,6 @@ export const NEW_NETWORK_ADDED_SWITCH_TO_NETWORK_BUTTON_ID =
 export const FAVICON_AVATAR_IMAGE_ID = 'favicon-avatar-image';
 export const NETWORK_AVATAR_IMAGE_ID = 'network-avatar-image';
 export const CHECKBOX_ICON_ID = 'checkbox-icon';
+
+export const LOGIN_WITH_BIOMETRICS_SWITCH = 'login-with-biometrics-switch';
+export const LOGIN_WITH_REMEMBER_ME_SWITCH = 'login-with-remember-me-switch';
