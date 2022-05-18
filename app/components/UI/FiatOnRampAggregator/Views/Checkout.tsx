@@ -111,7 +111,7 @@ const CheckoutWebView = () => {
           aggregatorInitialFiatOrder({
             id: orderId,
             account: selectedAddress,
-            network: Number(selectedChainId),
+            network: selectedChainId,
           }),
         );
         // add the order to the redux global store
