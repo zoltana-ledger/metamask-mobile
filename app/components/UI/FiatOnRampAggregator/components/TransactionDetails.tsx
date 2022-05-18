@@ -7,7 +7,7 @@ import {
   Linking,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import { OrderStatusEnum } from '@consensys/on-ramp-sdk';
+import { Order, OrderStatusEnum } from '@consensys/on-ramp-sdk';
 import Box from './Box';
 import CustomText from '../../../Base/Text';
 import BaseListItem from '../../../Base/ListItem';
@@ -23,6 +23,7 @@ import { getProviderName } from '../../../../reducers/fiatOrders';
 import useBlockExplorer from '../../Swaps/utils/useBlockExplorer';
 import Spinner from '../../AnimatedSpinner';
 import useAnalytics from '../hooks/useAnalytics';
+import { FiatOrder } from '../../FiatOrders';
 /* eslint-disable import/no-commonjs, @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports */
 const failedIcon = require('./images/TransactionIcon_Failed.png');
 // TODO: Convert into typescript and correctly type optionals
@@ -175,7 +176,7 @@ interface Props {
   /**
    * Object that represents the current route info like params passed to it
    */
-  order: any;
+  order: FiatOrder;
   /**
    * Current Network provider
    */
@@ -241,38 +242,39 @@ const TransactionDetails: React.FC<Props> = ({
     },
     [handleLinkPress, trackEvent],
   );
+  const orderData = data as Order;
 
   return (
     <View>
       <View style={styles.stage}>
         <Stage
           stage={state}
-          paymentType={data?.paymentMethod?.name}
+          paymentType={orderData?.paymentMethod?.name}
           cryptocurrency={cryptocurrency}
           providerName={providerName}
         />
       </View>
       <Text centered primary style={styles.tokenAmount}>
-        {data?.cryptoCurrency?.decimals &&
+        {orderData?.cryptoCurrency?.decimals &&
         cryptoAmount &&
         cryptoAmount !== 0 &&
         cryptocurrency ? (
           renderFromTokenMinimalUnit(
             toTokenMinimalUnit(
               cryptoAmount,
-              data?.cryptoCurrency?.decimals,
+              orderData?.cryptoCurrency?.decimals,
             ).toString(),
-            data?.cryptoCurrency?.decimals,
+            orderData?.cryptoCurrency?.decimals,
           )
         ) : (
           <Text>...</Text>
         )}{' '}
         {cryptocurrency}
       </Text>
-      {data?.fiatCurrency?.decimals && currencySymbol ? (
+      {orderData?.fiatCurrency?.decimals && currencySymbol ? (
         <Text centered small style={styles.fiatColor}>
           {currencySymbol}
-          {renderFiat(amountOut, currency, data?.fiatCurrency?.decimals)}
+          {renderFiat(amountOut, currency, orderData?.fiatCurrency?.decimals)}
         </Text>
       ) : (
         <Text>...</Text>
@@ -290,7 +292,7 @@ const TransactionDetails: React.FC<Props> = ({
             </ListItem.Body>
             <ListItem.Amount style={styles.transactionIdFlex}>
               <Text small bold primary right>
-                {data?.providerOrderId}
+                {orderData?.providerOrderId}
               </Text>
             </ListItem.Amount>
           </ListItem.Content>
@@ -306,7 +308,7 @@ const TransactionDetails: React.FC<Props> = ({
               </Text>
             </ListItem.Amount>
           </ListItem.Content>
-          {data?.paymentMethod?.name && (
+          {orderData?.paymentMethod?.name && (
             <ListItem.Content style={styles.listItems}>
               <ListItem.Body>
                 <Text black small>
@@ -317,12 +319,12 @@ const TransactionDetails: React.FC<Props> = ({
               </ListItem.Body>
               <ListItem.Amount>
                 <Text small bold primary>
-                  {data?.paymentMethod?.name}
+                  {orderData?.paymentMethod?.name}
                 </Text>
               </ListItem.Amount>
             </ListItem.Content>
           )}
-          {order.provider && data?.paymentMethod?.name && (
+          {order.provider && orderData?.paymentMethod?.name && (
             <Text small style={styles.provider}>
               {strings('fiat_on_ramp_aggregator.transaction.via')}{' '}
               {providerName}
@@ -335,14 +337,14 @@ const TransactionDetails: React.FC<Props> = ({
               </Text>
             </ListItem.Body>
             <ListItem.Amount>
-              {cryptoAmount && data?.cryptoCurrency?.decimals ? (
+              {cryptoAmount && orderData?.cryptoCurrency?.decimals ? (
                 <Text small bold primary>
                   {renderFromTokenMinimalUnit(
                     toTokenMinimalUnit(
                       cryptoAmount,
-                      data?.cryptoCurrency?.decimals,
+                      orderData?.cryptoCurrency?.decimals,
                     ).toString(),
-                    data?.cryptoCurrency?.decimals,
+                    orderData?.cryptoCurrency?.decimals,
                   )}{' '}
                   {cryptocurrency}
                 </Text>
@@ -361,13 +363,13 @@ const TransactionDetails: React.FC<Props> = ({
               {order.cryptocurrency &&
               isFinite(exchangeRate) &&
               currency &&
-              data?.fiatCurrency?.decimals ? (
+              orderData?.fiatCurrency?.decimals ? (
                 <Text small bold primary>
                   1 {order.cryptocurrency} @{' '}
                   {renderFiat(
                     exchangeRate,
                     currency,
-                    data?.fiatCurrency?.decimals,
+                    orderData?.fiatCurrency?.decimals,
                   )}
                 </Text>
               ) : (
@@ -384,13 +386,13 @@ const TransactionDetails: React.FC<Props> = ({
               </Text>
             </ListItem.Body>
             <ListItem.Amount>
-              {data?.fiatCurrency?.decimals && amountOut && currency ? (
+              {orderData?.fiatCurrency?.decimals && amountOut && currency ? (
                 <Text small bold primary>
                   {currencySymbol}
                   {renderFiat(
                     amountOut,
                     currency,
-                    data?.fiatCurrency?.decimals,
+                    orderData?.fiatCurrency?.decimals,
                   )}
                 </Text>
               ) : (
@@ -405,13 +407,13 @@ const TransactionDetails: React.FC<Props> = ({
               </Text>
             </ListItem.Body>
             <ListItem.Amount>
-              {cryptoFee && currency && data?.fiatCurrency?.decimals ? (
+              {cryptoFee && currency && orderData?.fiatCurrency?.decimals ? (
                 <Text small bold primary>
                   {currencySymbol}
                   {renderFiat(
-                    cryptoFee,
+                    cryptoFee as number,
                     currency,
-                    data?.fiatCurrency?.decimals,
+                    orderData?.fiatCurrency?.decimals,
                   )}
                 </Text>
               ) : (
@@ -433,10 +435,14 @@ const TransactionDetails: React.FC<Props> = ({
             {currencySymbol &&
             amount &&
             currency &&
-            data?.fiatCurrency?.decimals ? (
+            orderData?.fiatCurrency?.decimals ? (
               <Text small bold primary>
                 {currencySymbol}
-                {renderFiat(amount, currency, data?.fiatCurrency?.decimals)}
+                {renderFiat(
+                  amount as number,
+                  currency,
+                  orderData?.fiatCurrency?.decimals,
+                )}
               </Text>
             ) : (
               <Text>...</Text>
@@ -458,13 +464,15 @@ const TransactionDetails: React.FC<Props> = ({
           </TouchableOpacity>
         )}
       </Box>
-      {data?.providerLink && (
+      {orderData?.providerOrderLink && (
         <View style={styles.contactDesc}>
           <Text small>
             {strings('fiat_on_ramp_aggregator.transaction.questions')}{' '}
           </Text>
           <TouchableOpacity
-            onPress={() => handleProviderLinkPress(data?.providerLink)}
+            onPress={() =>
+              handleProviderLinkPress(orderData?.providerOrderLink)
+            }
           >
             {order.provider && data && (
               <Text small underline>
