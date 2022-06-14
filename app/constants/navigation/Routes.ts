@@ -13,6 +13,10 @@ const Routes = {
     REGION_HAS_STARTED: 'RegionHasStarted',
     ORDER_DETAILS: 'OrderDetails',
   },
+  VAULT_RECOVERY: {
+    ID: 'VaultRecovery',
+    RESTORE_WALLET: 'RestoreWallet',
+  },
 };
 
 export default Routes;
