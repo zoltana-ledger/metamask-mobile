@@ -21,6 +21,8 @@ LogBox.ignoreLogs([
   // in e2e tests until issue https://github.com/MetaMask/metamask-mobile/issues/1395 is resolved
   //"Error in RPC response",
   // 'User rejected account access',
+  "Removing intrinsics.Object.assign.default",
+  "Removing intrinsics.Object.assign.__esModule",
   "Can't perform a React state update",
   'Error evaluating injectedJavaScript',
   'createErrorFromErrorData',
