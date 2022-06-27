@@ -1,0 +1,22 @@
+diff --git a/node_modules/web3-core-method/lib/index.js b/node_modules/web3-core-method/lib/index.js
+index 18e471d..a3f5edb 100644
+--- a/node_modules/web3-core-method/lib/index.js
++++ b/node_modules/web3-core-method/lib/index.js
+@@ -62,13 +62,15 @@ Method.prototype.setRequestManager = function (requestManager, accounts) {
+ };
+ Method.prototype.createFunction = function (requestManager, accounts) {
+     var func = this.buildCall();
+-    func.call = this.call;
++    // func.call = this.call;
++    Object.defineProperty(this, 'call', { value: this.call });
+     this.setRequestManager(requestManager || this.requestManager, accounts || this.accounts);
+     return func;
+ };
+ Method.prototype.attachToObject = function (obj) {
+     var func = this.buildCall();
+-    func.call = this.call;
++    // func.call = this.call;
++    Object.defineProperty(this, 'call', { value: this.call });
+     var name = this.name.split('.');
+     if (name.length > 1) {
+         obj[name[0]] = obj[name[0]] || {};
