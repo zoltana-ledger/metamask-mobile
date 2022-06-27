@@ -67,7 +67,7 @@ LogBox.ignoreLogs([
 // AppRegistry.registerComponent(name, () => Storybook);
 
 // eslint-disable-next-line
-// lockdown({consoleTaming: 'unsafe'});
+lockdown({consoleTaming: 'unsafe'});
 
 /**
  * Application entry point responsible for registering root component
